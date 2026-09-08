@@ -1,10 +1,11 @@
+import { env } from '$env/dynamic/private';
 import { redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { zod4 } from "sveltekit-superforms/adapters";
-import { superValidate } from "sveltekit-superforms";
+import { superValidate, setError } from "sveltekit-superforms";
 import { signinSchema } from "$lib/schemas";
-import { fail } from "@sveltejs/kit";
-// import { authClient } from "$lib/auth-client";
+import { auth } from '$lib/server/auth';
+import { APIError } from 'better-auth';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
@@ -20,21 +21,29 @@ export const actions = {
 		const form = await superValidate(request, zod4(signinSchema));
 
 		if (!form.valid) {
-			return fail(400, { form });
+			return setError(form, "", "Form tidak valid!");
 		}
 
-		console.log(form.data);
 		try {
-			// const { data, error } = await authClient.signIn.email({
-			// 	email: form.data.email,
-			// 	password: form.data.password
-			// })
+			await auth.api.signInEmail({
+				body: {
+					email: form.data.email,
+					password: form.data.password,
+				},
+				headers: request.headers,
+			});
 		} catch (error) {
-			return fail(400, { form, message: typeof error === "string" ? error : "An unexpected error occurred" });
+			if(error instanceof APIError) {
+				if (error.body?.code === "INVALID_EMAIL_OR_PASSWORD") {
+					return setError(form, "password", "Email atau password salah!");
+				}
+				
+				return setError(form, "", error.message);
+			}
+
+			return setError(form, "", "Terjadi kesalahan!");
 		}
 
-		// redirect(303, "/");
-
-		return { form };
+		redirect(303, env.ORIGIN || "/");
 	}
 } satisfies Actions;
