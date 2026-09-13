@@ -1,13 +1,11 @@
 <script>
 	import Link from '$lib/components/Link.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import googleIcon from '$lib/assets/google-icon.svg';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { signupSchema } from '$lib/schemas.js';
 	import { untrack } from 'svelte';
 	import { EyeIcon, EyeOffIcon } from '@lucide/svelte';
-	import { authClient } from '$lib/auth-client.js';
 	import Navbar from '$lib/components/Navbar.svelte';
 
 	let { data } = $props();
@@ -19,134 +17,114 @@
 			validators: zod4Client(signupSchema)
 		}
 	);
-
-    const googleSignin = async () => {
-        await authClient.signIn.social({
-            provider: 'google',
-			callbackURL: "/"
-        })
-    }
 </script>
 
 <Navbar />
 
 <main class="flex h-screen w-full items-center justify-center bg-gray-50">
-	<div class="w-90 space-y-4 rounded-lg bg-white p-6">
+	<div class="w-90 space-y-4 rounded-lg bg-white border border-gray-200 p-6">
 		<header>
 			<h1 class="text-2xl leading-normal font-semibold">Daftar</h1>
 			<p class="text-sm text-gray-500">Daftar ke CTFs untuk melanjutkan.</p>
 		</header>
 
-		<div>
-			<Button variant="outline" class="flex w-full items-center justify-center space-x-4" onclick={googleSignin}>
-				<img src={googleIcon} alt="Google Icon" class="w-5" />
-				<span>Daftar dengan Google</span>
-			</Button>
+		<form method="post" class="space-y-3" use:enhance>
+			<div class="space-y-1">
+				<label for="name" class="block">Nama</label>
+				<input
+					type="name"
+					id="name"
+					name="name"
+					bind:value={$form.name}
+					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+					placeholder="Player CTFs"
+					{...$constraints.name}
+				/>
+				{#if $errors.name}
+					<p class="text-xs text-red-500">{$errors.name}</p>
+				{/if}
+			</div>
 
-            <div class="flex items-center justify-center space-x-3 my-3">
-                <div class="border-t border-gray-200 w-full"></div>
-                <p class="text-center text-xs text-gray-500">atau</p>
-                <div class="border-t border-gray-200 w-full"></div>
-            </div>
+			<div class="space-y-1">
+				<label for="email" class="block">Email</label>
+				<input
+					type="email"
+					id="email"
+					name="email"
+					bind:value={$form.email}
+					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+					placeholder="player@ctfs.io"
+					{...$constraints.email}
+				/>
+				{#if $errors.email}
+					<p class="text-xs text-red-500">{$errors.email}</p>
+				{/if}
+			</div>
 
-			<form method="post" class="space-y-3" use:enhance>
-                <div class="space-y-1">
-					<label for="name" class="block">Nama</label>
+			<div class="space-y-1">
+				<label for="password" class="block">Password</label>
+				<div class="relative">
 					<input
-						type="name"
-						id="name"
-                        name="name"
-						bind:value={$form.name}
-						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
-						placeholder="Player CTFs"
-						{...$constraints.name}
+						type={showPassword ? 'text' : 'password'}
+						id="password"
+						name="password"
+						bind:value={$form.password}
+						class="w-full rounded-md border border-gray-300 px-3 py-2 pr-10 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none [[type='password']]:[&::-ms-reveal]:hidden"
+						placeholder="••••••••"
+						{...$constraints.password}
 					/>
-					{#if $errors.name}
-						<p class="text-xs text-red-500">{$errors.name}</p>
-					{/if}
+					<button
+						type="button"
+						class="absolute top-1/2 right-4 -translate-y-1/2 transform text-gray-500"
+						onclick={() => (showPassword = !showPassword)}
+					>
+						{#if showPassword}
+							<EyeIcon size={18} />
+						{:else}
+							<EyeOffIcon size={18} />
+						{/if}
+					</button>
 				</div>
-
-				<div class="space-y-1">
-					<label for="email" class="block">Email</label>
+				{#if $errors.password}
+					<p class="text-xs text-red-500">{$errors.password}</p>
+				{/if}
+			</div>
+			
+			<div class="space-y-1">
+				<label for="confirmPassword" class="block">Konfirmasi Password</label>
+				<div class="relative">
 					<input
-						type="email"
-						id="email"
-                        name="email"
-						bind:value={$form.email}
-						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
-						placeholder="player@ctfs.io"
-						{...$constraints.email}
+						type={showPassword ? 'text' : 'password'}
+						id="confirmPassword"
+						name="confirmPassword"
+						bind:value={$form.confirmPassword}
+						class="w-full rounded-md border border-gray-300 px-3 py-2 pr-10 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none [[type='password']]:[&::-ms-reveal]:hidden"
+						placeholder="••••••••"
+						{...$constraints.confirmPassword}
 					/>
-					{#if $errors.email}
-						<p class="text-xs text-red-500">{$errors.email}</p>
-					{/if}
+					<button
+						type="button"
+						class="absolute top-1/2 right-4 -translate-y-1/2 transform text-gray-500"
+						onclick={() => (showPassword = !showPassword)}
+					>
+						{#if showPassword}
+							<EyeIcon size={18} />
+						{:else}
+							<EyeOffIcon size={18} />
+						{/if}
+					</button>
 				</div>
+				{#if $errors.confirmPassword}
+					<p class="text-xs text-red-500">{$errors.confirmPassword}</p>
+				{/if}
+			</div>
 
-				<div class="space-y-1">
-					<label for="password" class="block">Password</label>
-					<div class="relative">
-						<input
-							type={showPassword ? 'text' : 'password'}
-							id="password"
-                            name="password"
-							bind:value={$form.password}
-							class="w-full rounded-md border border-gray-300 px-3 py-2 pr-10 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none [[type='password']]:[&::-ms-reveal]:hidden"
-							placeholder="••••••••"
-							{...$constraints.password}
-						/>
-						<button
-							type="button"
-							class="absolute top-1/2 right-4 -translate-y-1/2 transform text-gray-500"
-							onclick={() => (showPassword = !showPassword)}
-						>
-							{#if showPassword}
-								<EyeIcon size={18} />
-							{:else}
-								<EyeOffIcon size={18} />
-							{/if}
-						</button>
-					</div>
-					{#if $errors.password}
-						<p class="text-xs text-red-500">{$errors.password}</p>
-					{/if}
-				</div>
-				
-                <div class="space-y-1">
-					<label for="confirmPassword" class="block">Konfirmasi Password</label>
-					<div class="relative">
-						<input
-							type={showPassword ? 'text' : 'password'}
-							id="confirmPassword"
-                            name="confirmPassword"
-							bind:value={$form.confirmPassword}
-							class="w-full rounded-md border border-gray-300 px-3 py-2 pr-10 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none [[type='password']]:[&::-ms-reveal]:hidden"
-							placeholder="••••••••"
-							{...$constraints.confirmPassword}
-						/>
-						<button
-							type="button"
-							class="absolute top-1/2 right-4 -translate-y-1/2 transform text-gray-500"
-							onclick={() => (showPassword = !showPassword)}
-						>
-							{#if showPassword}
-								<EyeIcon size={18} />
-							{:else}
-								<EyeOffIcon size={18} />
-							{/if}
-						</button>
-					</div>
-					{#if $errors.confirmPassword}
-						<p class="text-xs text-red-500">{$errors.confirmPassword}</p>
-					{/if}
-				</div>
-
-				<Button disabled={$submitting} class="mt-6 w-full">Daftar</Button>
-				<p class="text-sm text-gray-500 text-center leading-loose">
-					Sudah punya akun? <Link variant="text" href="/signin" class="font-medium text-blue-500"
-						>Masuk sekarang</Link
-					>.
-				</p>
-			</form>
-		</div>
+			<Button disabled={$submitting} class="mt-6 w-full">Daftar</Button>
+			<p class="text-sm text-gray-500 text-center leading-loose">
+				Sudah punya akun? <Link variant="text" href="/signin" class="font-medium text-blue-500"
+					>Masuk sekarang</Link
+				>.
+			</p>
+		</form>
 	</div>
 </main>
