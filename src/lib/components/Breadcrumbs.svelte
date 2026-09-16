@@ -23,8 +23,6 @@
     className
 )}>
     <HouseIcon size={14} />
-    <ChevronRightIcon size={14} />
-    <p>Beranda</p>
     {#each pathList as path (pathList.indexOf(path))}
         <ChevronRightIcon size={14} />
         <p>{capitalize(path)}</p>

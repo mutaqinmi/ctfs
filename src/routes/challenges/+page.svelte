@@ -4,48 +4,9 @@
 	import Link from '$lib/components/Link.svelte';
 	import Menu from '$lib/components/Menu.svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
-	import { ChevronDownIcon, FunnelIcon, SearchIcon } from '@lucide/svelte';
+	import { ChevronDownIcon, FunnelIcon, PlusIcon, SearchIcon } from '@lucide/svelte';
 
 	let { data } = $props();
-
-    const challenges = [
-        {
-            id: 1,
-            title: 'Tantangan 1',
-            author: 'John Doe',
-            difficulty: 'Easy',
-            category: 'Programming',
-            solved: 126,
-            slug: 'tantangan-1'
-        },
-        {
-            id: 2,
-            title: 'Tantangan 1',
-            author: 'John Doe',
-            difficulty: 'Easy',
-            category: 'Programming',
-            solved: 126,
-            slug: 'tantangan-1'
-        },
-        {
-            id: 3,
-            title: 'Tantangan 1',
-            author: 'John Doe',
-            difficulty: 'Easy',
-            category: 'Programming',
-            solved: 126,
-            slug: 'tantangan-1'
-        },
-        {
-            id: 4,
-            title: 'Tantangan 1',
-            author: 'John Doe',
-            difficulty: 'Easy',
-            category: 'Programming',
-            solved: 126,
-            slug: 'tantangan-1'
-        }
-    ]
 </script>
 
 <Navbar user={data.user} />
@@ -78,21 +39,27 @@
                         <FunnelIcon size={18} />
                         <span>Filter</span>
                     </Button>
+                    {#if data.user.role === 'admin'}
+                        <Link href="/challenges/create" class="flex items-center justify-center gap-2">
+                            <PlusIcon size={18} />
+                            <span>Buat Tantangan</span>
+                        </Link>
+                    {/if}
                 </div>
 			</div>
             <div class="mt-3 grid grid-cols-3 gap-2">
-                {#each challenges as challenge (challenge.id)}
-                    <Link href={`/challenges/${challenge.slug}`} class="p-4 bg-white border border-gray-300 rounded-lg text-black! hover:bg-gray-100! active:bg-gray-200!">
+                {#each data.allChallenges as challenge (challenge.challenge_id)}
+                    <Link data-sveltekit-preload-data="tap" href={`/challenges/${challenge.challenge_slug}`} class="p-4 bg-white border border-gray-300 rounded-lg text-black! hover:bg-gray-100! active:bg-gray-200!">
                         <div class="flex items-start justify-between">
                             <header>
-                                <h2 class="font-medium text-xl">{challenge.title}</h2>
-                                <p class="text-sm text-gray-400">oleh {challenge.author}</p>
+                                <h2 class="font-medium text-xl">{challenge.challenge_title}</h2>
+                                <p class="text-sm text-gray-400">oleh {challenge.challenge_author}</p>
                             </header>
-                            <p class="text-xs px-2 py-1 bg-green-200 text-green-700 rounded-full inline-block">{challenge.difficulty}</p>
+                            <p class="text-xs px-2 py-1 bg-green-200 text-green-700 rounded-full inline-block">{challenge.challenge_difficulty}</p>
                         </div>
                         <div class="mt-6 pt-3 border-t border-t-gray-300 border-dotted text-sm text-gray-400 flex items-center justify-between">
-                            <p>{challenge.category}</p>
-                            <p>{challenge.solved} Berhasil</p>
+                            <p>{challenge.challenge_category}</p>
+                            <!-- <p>{challenge.challenges.solved} Berhasil</p> -->
                         </div>
                     </Link>
                 {/each}

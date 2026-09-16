@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1788858631090,
-      "tag": "0000_silent_slapstick",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1789306647788,
-      "tag": "0001_jazzy_mimic",
+      "when": 1789566225967,
+      "tag": "0000_majestic_deathstrike",
       "breakpoints": true
     }
   ]

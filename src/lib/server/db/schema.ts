@@ -4,13 +4,14 @@ import { user } from './auth.schema';
 export const difficultyEnum = pgEnum("difficulty", ["easy", "medium", "hard"]);
 export const challenges = pgTable("challenges", {
 	challenge_id: serial("challenge_id").primaryKey(),
-	chalenge_title: varchar("title").notNull(),
-	challenge_description: text("description").notNull(),
+	challenge_title: varchar("title").notNull(),
+	challenge_description: text("description"),
+	challenge_flag: varchar("flag").notNull(),
+	challenge_points: integer("points").notNull(),
 	category_id: integer("category_id").notNull().references(() => categories.category_id, { onDelete: "cascade", onUpdate: "cascade" }),
-	author_id: integer("author_id").notNull().references(() => user.id, { onDelete: "cascade", onUpdate: "cascade" }),
+	author_id: varchar("author_id").notNull().references(() => user.id, { onDelete: "cascade", onUpdate: "cascade" }),
 	challenge_difficulty: difficultyEnum("difficulty").default("easy").notNull(),
-	challenge_solved: integer("solved"),
-	challenge_slug: varchar("challenge_slug")
+	challenge_slug: varchar("challenge_slug").unique().notNull(),
 })
 
 export const categories = pgTable("categories", {

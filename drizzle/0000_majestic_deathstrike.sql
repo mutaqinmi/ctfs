@@ -1,7 +1,20 @@
-CREATE TABLE "task" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"title" text NOT NULL,
-	"priority" integer DEFAULT 1 NOT NULL
+CREATE TYPE "public"."difficulty" AS ENUM('easy', 'medium', 'hard');--> statement-breakpoint
+CREATE TYPE "public"."user_role" AS ENUM('user', 'admin');--> statement-breakpoint
+CREATE TABLE "categories" (
+	"category_id" serial PRIMARY KEY NOT NULL,
+	"category_name" varchar NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "challenges" (
+	"challenge_id" serial PRIMARY KEY NOT NULL,
+	"title" varchar NOT NULL,
+	"description" text,
+	"flag" varchar NOT NULL,
+	"points" integer NOT NULL,
+	"category_id" integer NOT NULL,
+	"author_id" varchar NOT NULL,
+	"difficulty" "difficulty" DEFAULT 'easy' NOT NULL,
+	"challenge_slug" varchar
 );
 --> statement-breakpoint
 CREATE TABLE "account" (
@@ -39,6 +52,7 @@ CREATE TABLE "user" (
 	"email" text NOT NULL,
 	"email_verified" boolean DEFAULT false NOT NULL,
 	"image" text,
+	"role" "user_role" DEFAULT 'user' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "user_email_unique" UNIQUE("email")
@@ -53,6 +67,8 @@ CREATE TABLE "verification" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+ALTER TABLE "challenges" ADD CONSTRAINT "challenges_category_id_categories_category_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("category_id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "challenges" ADD CONSTRAINT "challenges_author_id_user_id_fk" FOREIGN KEY ("author_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "account_issuer_accountId_uidx" ON "account" USING btree ("issuer","account_id");--> statement-breakpoint
