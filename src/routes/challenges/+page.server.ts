@@ -17,6 +17,7 @@ export const load: PageServerLoad = async (event) => {
             challenge_difficulty: challenges.challenge_difficulty,
             challenge_slug: challenges.challenge_slug,
             challenge_category: categories.category_name,
+            challenge_points: challenges.challenge_points
         })
 		.from(challenges)
         .leftJoin(user, eq(challenges.author_id, user.id))

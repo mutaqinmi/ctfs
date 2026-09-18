@@ -1,6 +1,7 @@
 <script>
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import ChallengeCard from '$lib/components/ChallengeCard.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import Menu from '$lib/components/Menu.svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
@@ -49,19 +50,7 @@
 			</div>
             <div class="mt-3 grid grid-cols-3 gap-2">
                 {#each data.allChallenges as challenge (challenge.challenge_id)}
-                    <Link data-sveltekit-preload-data="tap" href={`/challenges/${challenge.challenge_slug}`} class="p-4 bg-white border border-gray-300 rounded-lg text-black! hover:bg-gray-100! active:bg-gray-200!">
-                        <div class="flex items-start justify-between">
-                            <header>
-                                <h2 class="font-medium text-xl">{challenge.challenge_title}</h2>
-                                <p class="text-sm text-gray-400">oleh {challenge.challenge_author}</p>
-                            </header>
-                            <p class="text-xs px-2 py-1 bg-green-200 text-green-700 rounded-full inline-block">{challenge.challenge_difficulty}</p>
-                        </div>
-                        <div class="mt-6 pt-3 border-t border-t-gray-300 border-dotted text-sm text-gray-400 flex items-center justify-between">
-                            <p>{challenge.challenge_category}</p>
-                            <!-- <p>{challenge.challenges.solved} Berhasil</p> -->
-                        </div>
-                    </Link>
+                    <ChallengeCard {challenge} />
                 {/each}
             </div>
 		</section>

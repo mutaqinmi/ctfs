@@ -18,6 +18,7 @@ export const load: PageServerLoad = async (event) => {
             challenge_difficulty: challenges.challenge_difficulty,
             challenge_description: challenges.challenge_description,
             challenge_category: categories.category_name,
+            challenge_points: challenges.challenge_points
         })
 		.from(challenges)
 		.where(eq(challenges.challenge_slug, slug))

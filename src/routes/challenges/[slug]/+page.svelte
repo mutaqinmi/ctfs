@@ -1,10 +1,15 @@
-<script>
+<script lang="ts">
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
+	import { badgeVariants } from '$lib/const/variants.js';
 	import { ArrowLeftIcon, SendIcon } from '@lucide/svelte';
 
 	let { data } = $props();
+
+	function capitalizeFirstLetter(val: string) {
+        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+    }
 </script>
 
 <Navbar user={data.user} />
@@ -19,10 +24,10 @@
 			<Breadcrumbs class="my-2" />
 			<header>
 				<h2 class="text-2xl font-semibold">{data.challenge.challenge_title}</h2>
-				<p class="text-sm leading-loose text-gray-400">oleh {data.challenge.challenge_author}</p>
+				<p class="text-sm leading-loose text-gray-400">oleh {data.challenge.challenge_author} · {data.challenge.challenge_points} poin</p>
 				<div class="mt-2 flex items-center gap-2">
-					<p class="inline-block rounded-full bg-green-200 px-2 py-1 text-sm text-green-700">
-						{data.challenge.challenge_difficulty}
+					<p class={badgeVariants({ variant: data.challenge.challenge_difficulty })}>
+						{capitalizeFirstLetter(data.challenge.challenge_difficulty)}
 					</p>
 					<p class="inline-block rounded-full bg-gray-200 px-2 py-1 text-sm text-gray-600">
 						{data.challenge.challenge_category}

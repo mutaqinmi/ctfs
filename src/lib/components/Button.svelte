@@ -3,7 +3,7 @@
 	import type { VariantProps } from "class-variance-authority";
 	import type { Snippet } from "svelte";
 	import type { HTMLButtonAttributes } from "svelte/elements";
-    import { buttonVariants } from "$lib/const/button-variants";
+    import { buttonVariants } from "$lib/const/variants";
 
     interface ButtonProps extends HTMLButtonAttributes {
         variant?: VariantProps<typeof buttonVariants>["variant"];

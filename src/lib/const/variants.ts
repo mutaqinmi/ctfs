@@ -22,3 +22,19 @@ export const buttonVariants = cva(
         }
     }
 )
+
+export const badgeVariants = cva(
+    "text-xs px-2 py-1 rounded-full inline-block",
+    {
+        variants: {
+            variant: {
+                easy: "bg-green-200 text-green-700",
+                medium: "bg-orange-200 text-orange-700",
+                hard: "bg-red-200 text-red-700"
+            }
+        },
+        defaultVariants: {
+            variant: "easy"
+        }
+    }
+)
