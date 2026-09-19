@@ -8,6 +8,13 @@
       "when": 1789566225967,
       "tag": "0000_majestic_deathstrike",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789838687517,
+      "tag": "0001_magenta_sprite",
+      "breakpoints": true
     }
   ]
 }

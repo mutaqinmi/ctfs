@@ -44,7 +44,22 @@ export const challengeMediaTypes = [
         label: "Docker Image"
     }
 ] as const;
-const fileSchema = z.file();
+const mediaMetadataSchema = z.preprocess(
+    (value) => {
+        if (typeof value !== "string") return value;
+        try {
+            return JSON.parse(value);
+        } catch {
+            return undefined;
+        }
+    },
+    z.array(z.object({
+        objectKey: z.string().min(1, "Object key media tidak boleh kosong"),
+        fileName: z.string().min(1, "Nama file media tidak boleh kosong"),
+        mimeType: z.string().optional(),
+        fileSize: z.number().int().positive()
+    })).optional()
+);
 export const challengeSchema = z.object({
     challenge_title: z.string().min(1, "Nama tantangan tidak boleh kosong"),
     challenge_description: z.string().optional(),
@@ -53,7 +68,7 @@ export const challengeSchema = z.object({
     challenge_difficulty: z.enum(challengeDifficultyValues, "Tingkat kesulitan tidak valid"),
     category_id: z.number().min(1, "Kategori tidak boleh kosong"),
     challenge_flag: z.string().min(1, "Nilai flag tidak boleh kosong"),
-    challenge_media: z.array(fileSchema).optional(),
+    challenge_media_metadata: mediaMetadataSchema,
     challenge_media_type: z.enum(challengeMediaTypeValues).optional(),
     challenge_hints: z.array(z.string().min(1, "Hint tidak boleh kosong"))
 })

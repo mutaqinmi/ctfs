@@ -5,72 +5,16 @@
 	import {
 		ArrowLeftIcon,
 		ChevronDownIcon,
-		CloudUploadIcon,
 		PlusIcon,
-		TrashIcon,
 		XIcon
 	} from '@lucide/svelte';
 	import { untrack } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { challengeDifficulties, challengeMediaTypes, challengeSchema } from '$lib/schemas.js';
+	import InputFile from '$lib/components/InputFile.svelte';
 
 	let { data } = $props();
-	let selectedFiles: File[] = $state([]);
-	let mediaInput: HTMLInputElement;
-	let isDragging = $state(false);
-
-	function addFilesFromList(fileList: FileList | null) {
-		const newFiles = fileList ? [...fileList] : [];
-		const files = [...selectedFiles, ...newFiles].filter(
-			(file, index, allFiles) =>
-				allFiles.findIndex(
-					(otherFile) =>
-						otherFile.name === file.name &&
-						otherFile.size === file.size &&
-						otherFile.lastModified === file.lastModified
-				) === index
-		);
-
-		selectedFiles = files;
-		const dataTransfer = new DataTransfer();
-		files.forEach((file) => dataTransfer.items.add(file));
-		mediaInput.files = dataTransfer.files;
-	}
-
-	function addFiles(event: Event) {
-		const input = event.currentTarget as HTMLInputElement;
-		addFilesFromList(input.files);
-	}
-
-	function handleDragOver(event: DragEvent) {
-		event.preventDefault();
-		isDragging = true;
-	}
-
-	function handleDragLeave(event: DragEvent) {
-		event.preventDefault();
-		isDragging = false;
-	}
-
-	function handleDrop(event: DragEvent) {
-		event.preventDefault();
-		isDragging = false;
-		addFilesFromList(event.dataTransfer?.files ?? null);
-	}
-
-	function removeFile(index: number) {
-		selectedFiles = selectedFiles.filter((_, fileIndex) => fileIndex !== index);
-		const dataTransfer = new DataTransfer();
-		selectedFiles.forEach((file) => dataTransfer.items.add(file));
-		mediaInput.files = dataTransfer.files;
-	}
-
-	function formatFileSize(bytes: number) {
-		if (bytes < 1024) return `${bytes} B`;
-		if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-		return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-	}
 
 	function addHint(event: MouseEvent) {
 		event.preventDefault();
@@ -84,7 +28,8 @@
 	const { form, errors, constraints, submitting, enhance } = superForm(
 		untrack(() => data.form),
 		{
-			validators: zod4Client(challengeSchema)
+			validators: zod4Client(challengeSchema),
+			dataType: 'json'
 		}
 	);
 </script>
@@ -121,7 +66,6 @@
 					id="challenge-form"
 					action="/challenges/create"
 					method="POST"
-					enctype="multipart/form-data"
 					class="grid grid-cols-5 gap-6"
 					use:enhance
 				>
@@ -246,80 +190,9 @@
                                         Unggah file gambar atau video untuk menambahkan media ke challenge
                                     </p>
                                 </header>
-                                <div
-                                    role="button"
-                                    tabindex="0"
-                                    ondragover={handleDragOver}
-                                    ondragleave={handleDragLeave}
-                                    ondrop={handleDrop}
-                                    class:!border-blue-500={isDragging}
-                                    class="rounded-md"
-                                >
-                                    <label
-                                        for="media"
-                                        class="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-gray-300 text-gray-400 transition-all duration-200 ease-in-out hover:border-blue-400 hover:text-blue-500"
-                                        class:!border-blue-500={isDragging}
-                                        class:!bg-blue-50={isDragging}
-                                    >
-                                        <CloudUploadIcon size={48} />
-                                        <span class="mt-4"
-                                            >{isDragging ? 'Lepaskan file di sini' : 'Klik atau seret file ke sini'}</span
-                                        >
-                                    </label>
-                                    <input
-                                        bind:this={mediaInput}
-                                        onchange={addFiles}
-                                        type="file"
-                                        name="challenge_media"
-                                        id="media"
-                                        class="hidden"
-                                        multiple
-                                        { ...$constraints.challenge_media }
-                                    />
-                                    {#if $errors.challenge_media}
-                                        <p class="text-xs text-red-500">{$errors.challenge_media}</p>
-                                    {/if}
-                                </div>
-                                {#if selectedFiles.length > 0}
-                                    <div class="overflow-hidden rounded-md border border-gray-200">
-                                        <table class="w-full text-left text-sm">
-                                            <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
-                                                <tr>
-                                                    <th scope="col" class="px-3 py-2">Nama</th>
-                                                    <th scope="col" class="px-3 py-2">Jenis</th>
-                                                    <th scope="col" class="px-3 py-2">Ukuran</th>
-                                                    <th scope="col" class="px-3 py-2"><span class="sr-only">Hapus</span></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-gray-200">
-                                                {#each selectedFiles as file, index (file.name + file.lastModified)}
-                                                    <tr>
-                                                        <td class="max-w-0 truncate px-3 py-2 text-gray-700" title={file.name}
-                                                            >{file.name}</td
-                                                        >
-                                                        <td class="px-3 py-2 whitespace-nowrap text-gray-500"
-                                                            >{file.type || 'Tidak diketahui'}</td
-                                                        >
-                                                        <td class="px-3 py-2 whitespace-nowrap text-gray-500"
-                                                            >{formatFileSize(file.size)}</td
-                                                        >
-                                                        <td class="px-3 py-2 text-right">
-                                                            <button
-                                                                type="button"
-                                                                aria-label={`Hapus ${file.name}`}
-                                                                title="Hapus file"
-                                                                class="text-gray-400 hover:text-red-500"
-                                                                onclick={() => removeFile(index)}
-                                                            >
-                                                                <TrashIcon size={16} />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                {/each}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                {/if}
+								<div>
+									<InputFile id="media" bind:metadata={$form.challenge_media_metadata} />
+								</div>
                             </div>
                             <div class="space-y-2">
                                 <header>
@@ -332,7 +205,13 @@
                                         <label
                                             class="cursor-pointer border-r border-gray-300 px-2 py-2 text-center text-sm has-checked:bg-blue-50 has-checked:text-blue-600"
                                         >
-                                            <input type="radio" name="challenge_media_type" value={mediaType.value} class="sr-only" />
+											<input
+												type="radio"
+												name="challenge_media_type"
+												value={mediaType.value}
+												bind:group={$form.challenge_media_type}
+												class="sr-only"
+											/>
                                             {mediaType.label}
                                         </label>
                                     {/each}
