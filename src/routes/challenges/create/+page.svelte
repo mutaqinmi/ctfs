@@ -52,7 +52,7 @@
 			<header class="mb-6">
 				<h2 class="text-2xl font-semibold">Buat Tantangan Baru</h2>
 			</header>
-			<div class="flex flex-col gap-4">
+			<div class="flex flex-col gap-4 mb-12">
 				<Button
 					disabled={$submitting}
 					type="submit"
