@@ -29,7 +29,7 @@ export const challengeDifficulties = [
         label: "Sulit"
     }
 ] as const;
-export const challengeMediaTypeValues = ['image', 'source', 'docker'] as const;
+export const challengeMediaTypeValues = ['image', 'source'] as const;
 export const challengeMediaTypes = [
     {
         value: challengeMediaTypeValues[0],
@@ -38,10 +38,6 @@ export const challengeMediaTypes = [
     {
         value: challengeMediaTypeValues[1],
         label: "Source Code"
-    },
-    {
-        value: challengeMediaTypeValues[2],
-        label: "Docker Image"
     }
 ] as const;
 const mediaMetadataSchema = z.preprocess(

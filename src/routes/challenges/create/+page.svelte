@@ -199,7 +199,7 @@
                                     <h2 class="font-medium">Jenis Media</h2>
                                 </header>
                                 <div
-                                    class="grid w-full grid-cols-3 overflow-hidden rounded-md border border-gray-300"
+                                    class="grid w-full grid-cols-2 overflow-hidden rounded-md border border-gray-300"
                                 >
                                     {#each challengeMediaTypes as mediaType (mediaType.value)}
                                         <label

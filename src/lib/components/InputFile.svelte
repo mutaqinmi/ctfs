@@ -51,7 +51,7 @@
                 body: JSON.stringify({
                     filename: file.name,
                     contentType: file.type || 'application/octet-stream',
-                    size: file.size
+                    size: file.size 
                 })
             });
             if (!presignResponse.ok) throw new Error('Gagal menyiapkan upload');
