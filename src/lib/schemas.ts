@@ -29,17 +29,6 @@ export const challengeDifficulties = [
         label: "Sulit"
     }
 ] as const;
-export const challengeMediaTypeValues = ['image', 'source'] as const;
-export const challengeMediaTypes = [
-    {
-        value: challengeMediaTypeValues[0],
-        label: "Gambar"
-    },
-    {
-        value: challengeMediaTypeValues[1],
-        label: "Source Code"
-    }
-] as const;
 const mediaMetadataSchema = z.preprocess(
     (value) => {
         if (typeof value !== "string") return value;
@@ -50,6 +39,7 @@ const mediaMetadataSchema = z.preprocess(
         }
     },
     z.array(z.object({
+        mediaId: z.number().int().positive().optional(),
         objectKey: z.string().min(1, "Object key media tidak boleh kosong"),
         fileName: z.string().min(1, "Nama file media tidak boleh kosong"),
         mimeType: z.string().optional(),
@@ -65,6 +55,5 @@ export const challengeSchema = z.object({
     category_id: z.number().min(1, "Kategori tidak boleh kosong"),
     challenge_flag: z.string().min(1, "Nilai flag tidak boleh kosong"),
     challenge_media_metadata: mediaMetadataSchema,
-    challenge_media_type: z.enum(challengeMediaTypeValues).optional(),
     challenge_hints: z.array(z.string().min(1, "Hint tidak boleh kosong"))
 })

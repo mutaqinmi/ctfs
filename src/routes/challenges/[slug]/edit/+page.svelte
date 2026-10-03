@@ -6,6 +6,7 @@
 		ArrowLeftIcon,
 		ChevronDownIcon,
 		PlusIcon,
+		SaveIcon,
 		XIcon
 	} from '@lucide/svelte';
 	import { untrack } from 'svelte';
@@ -50,7 +51,7 @@
 			</Button>
 			<Breadcrumbs class="my-2" />
 			<header class="mb-6">
-				<h2 class="text-2xl font-semibold">Buat Tantangan Baru</h2>
+				<h2 class="text-2xl font-semibold">Edit Tantangan</h2>
 			</header>
 			<div class="flex flex-col gap-4 mb-12">
 				<Button
@@ -59,12 +60,11 @@
 					form="challenge-form"
 					class="flex w-fit items-center gap-2 self-end"
 				>
-					<PlusIcon size={16} />
-					<span>Buat Tantangan</span>
+					<SaveIcon size={16} />
+					<span>Simpan Perubahan</span>
 				</Button>
 				<form
 					id="challenge-form"
-					action="/challenges/create"
 					method="POST"
 					class="grid grid-cols-5 gap-6"
 					use:enhance

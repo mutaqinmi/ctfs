@@ -44,9 +44,6 @@ export const actions = {
         if (mediaMetadata.some(({ objectKey }) => !objectKey.startsWith(`uploads/${user.id}/`))) {
             return fail(400, { form, message: 'Object key media tidak valid' });
         }
-        if (mediaMetadata.length > 0 && !form.data.challenge_media_type) {
-            return fail(400, { form, message: 'Jenis media wajib dipilih' });
-        }
 
         const slug = form.data.challenge_title
             .toLowerCase()
@@ -70,11 +67,10 @@ export const actions = {
                     })
                     .returning({ id: challenges.challenge_id });
 
-                if (mediaMetadata.length > 0 && form.data.challenge_media_type) {
+                if (mediaMetadata.length > 0) {
                     await tx.insert(challengeMedia).values(
                         mediaMetadata.map(({ objectKey, fileName, mimeType, fileSize }) => ({
                             challenge_id: challenge.id,
-                            media_type: form.data.challenge_media_type!,
                             file_name: fileName,
                             object_key: objectKey,
                             mime_type: mimeType || null,

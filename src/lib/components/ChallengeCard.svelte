@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Link from "./Link.svelte";
 	import { badgeVariants } from "$lib/const/variants";
+	import { cn } from "$lib/utils";
 
     let { challenge } = $props();
 
@@ -9,10 +10,13 @@
     }
 </script>
 
-<Link data-sveltekit-preload-data="tap" href={`/challenges/${challenge.challenge_slug}`} class="p-4 bg-white border border-gray-300 rounded-lg text-black! hover:bg-gray-100! active:bg-gray-200!">
+<Link data-sveltekit-preload-data="tap" href={`/challenges/${challenge.challenge_slug}`} class={cn(
+    "p-4 bg-white border border-gray-300 rounded-lg text-black! hover:bg-gray-100! active:bg-gray-200!",
+    challenge.challenge_solved ? "opacity-50" : "",
+)}>
     <div class="flex items-start justify-between">
         <header>
-            <h2 class="font-medium text-xl">{challenge.challenge_title}</h2>
+            <h2 class:line-through={challenge.challenge_solved} class:text-gray-400={challenge.challenge_solved} class="font-medium text-xl">{challenge.challenge_title}</h2>
             <p class="text-sm text-gray-400">oleh {challenge.challenge_author}</p>
         </header>
         <p class={badgeVariants({ variant: challenge.challenge_difficulty.toLowerCase() })}>

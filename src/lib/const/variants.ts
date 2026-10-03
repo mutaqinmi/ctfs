@@ -13,7 +13,8 @@ export const buttonVariants = cva(
             size: {
                 sm: "px-2 py-1 text-sm",
                 md: "px-3 py-2 text-normal",
-                lg: "px-4 py-3 text-lg"
+                lg: "px-4 py-3 text-lg",
+                icon: "p-2"
             }
         },
         defaultVariants: {
@@ -30,7 +31,8 @@ export const badgeVariants = cva(
             variant: {
                 easy: "bg-green-200 text-green-700",
                 medium: "bg-orange-200 text-orange-700",
-                hard: "bg-red-200 text-red-700"
+                hard: "bg-red-200 text-red-700",
+                completed: "bg-blue-200 text-blue-700"
             }
         },
         defaultVariants: {

@@ -3,14 +3,24 @@
 	import Button from '$lib/components/Button.svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import { badgeVariants } from '$lib/const/variants.js';
-	import { ArrowLeftIcon, DownloadIcon, EyeOffIcon, SendIcon } from '@lucide/svelte';
+	import {
+		ArrowLeftIcon,
+		DownloadIcon,
+		EllipsisVertical,
+		EyeOffIcon,
+		TrashIcon,
+		PencilIcon,
+		SendIcon
+	} from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { enhance } from '$app/forms';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { cn } from '$lib/utils.js';
+	import Link from '$lib/components/Link.svelte';
 
 	let { data, form } = $props();
 	let revealedHints = new SvelteSet<number>();
+	let showChallengeOptions = $state(false);
 
 	function capitalizeFirstLetter(val: string) {
 		return String(val).charAt(0).toUpperCase() + String(val).slice(1);
@@ -26,6 +36,11 @@
 	function revealHint(hintId: number) {
 		if (!revealedHints.has(hintId)) revealedHints.add(hintId);
 	}
+
+	function handleDelete(event: SubmitEvent) {
+		const confirmDelete = confirm('Apakah Anda yakin ingin menghapus tantangan ini?');
+		if (!confirmDelete) event.preventDefault();
+	}
 </script>
 
 <Navbar user={data.user} />
@@ -33,23 +48,83 @@
 <main class="min-h-screen w-full bg-gray-50 pt-28">
 	<div class="mx-auto grid w-4/5 grid-cols-4 gap-4">
 		<section class="col-span-3">
-			<Button onclick={() => window.history.back()} variant="text" size="sm" class="flex w-fit items-center gap-2 font-normal text-blue-500">
-				<ArrowLeftIcon size={16} />
-				<span>Kembali ke Tantangan</span>
-			</Button>
-			<Breadcrumbs class="my-2" />
-			<header>
-				<h2 class="text-2xl font-semibold">{data.challenge.challenge_title}</h2>
-				<p class="text-sm leading-loose text-gray-400">oleh {data.challenge.challenge_author} · {data.challenge.challenge_points} poin</p>
-				<div class="mt-2 flex items-center gap-2">
-					<p class={badgeVariants({ variant: data.challenge.challenge_difficulty })}>
-						{capitalizeFirstLetter(data.challenge.challenge_difficulty)}
-					</p>
-					<p class="inline-block rounded-full bg-gray-200 px-2 py-1 text-sm text-gray-600">
-						{data.challenge.challenge_category}
-					</p>
+			<div class="flex items-start justify-between gap-4">
+				<div>
+					<Link
+						href="/challenges"
+						variant="text"
+						size="sm"
+						class="flex w-fit items-center gap-2 font-normal text-blue-500"
+					>
+						<ArrowLeftIcon size={16} />
+						<span>Kembali ke Tantangan</span>
+					</Link>
+					<Breadcrumbs class="my-2" />
+					<header>
+						<h2 class="flex items-center gap-2 text-2xl font-semibold">
+							<span class:line-through={data.challenge.challenge_solved}
+								>{data.challenge.challenge_title}</span
+							>
+							{#if data.challenge.challenge_solved}
+								<p class={badgeVariants({ variant: 'completed' })}>Selesai</p>
+							{/if}
+						</h2>
+						<p class="text-sm leading-loose text-gray-400">
+							oleh {data.challenge.challenge_author} · {data.challenge.challenge_points} poin
+						</p>
+						<div class="mt-2 flex items-center gap-2">
+							<p class={badgeVariants({ variant: data.challenge.challenge_difficulty })}>
+								{capitalizeFirstLetter(data.challenge.challenge_difficulty)}
+							</p>
+							<p class="inline-block rounded-full bg-gray-200 px-2 py-1 text-sm text-gray-600">
+								{data.challenge.challenge_category}
+							</p>
+						</div>
+					</header>
 				</div>
-			</header>
+				{#if data.user.role === 'admin'}
+					<div class="relative">
+						<Button
+							variant="ghost"
+							size="icon"
+							onclick={() => (showChallengeOptions = !showChallengeOptions)}
+						>
+							<EllipsisVertical size={20} />
+						</Button>
+
+						{#if showChallengeOptions}
+							<ul
+								class="absolute right-0 z-10 mt-3 rounded-md border border-gray-200 bg-white shadow"
+							>
+								<li>
+									<Link
+										href={`/challenges/${data.challenge.challenge_slug}/edit`}
+										variant="ghost"
+										size="lg"
+										class="text-md font-normal flex gap-3 items-center text-nowrap"
+									>
+										<PencilIcon size={16} />
+										<span>Edit Tantangan</span>
+									</Link>
+								</li>
+								<li>
+									<form action="?/delete" method="post" onsubmit={handleDelete} use:enhance>
+										<Button
+											type="submit"
+											variant="ghost"
+											size="lg"
+											class="text-md font-normal flex gap-3 items-center text-nowrap text-red-500"
+										>
+											<TrashIcon size={16} />
+											<span>Hapus Tantangan</span>
+										</Button>
+									</form>
+								</li>
+							</ul>
+						{/if}
+					</div>
+				{/if}
+			</div>
 			<p class="mt-6 text-sm">{data.challenge.challenge_description}</p>
 			{#if data.media.length > 0}
 				<div class="mt-6 overflow-hidden rounded-md border border-gray-200 bg-white">
@@ -65,9 +140,15 @@
 						<tbody class="divide-y divide-gray-200">
 							{#each data.media as media (media.id)}
 								<tr>
-									<td class="max-w-0 truncate px-3 py-2 text-gray-700" title={media.fileName}>{media.fileName}</td>
-									<td class="px-3 py-2 whitespace-nowrap text-gray-500">{media.mimeType || media.mediaType}</td>
-									<td class="px-3 py-2 whitespace-nowrap text-gray-500">{formatFileSize(media.fileSize)}</td>
+									<td class="max-w-0 truncate px-3 py-2 text-gray-700" title={media.fileName}
+										>{media.fileName}</td
+									>
+									<td class="px-3 py-2 whitespace-nowrap text-gray-500"
+										>{media.mimeType}</td
+									>
+									<td class="px-3 py-2 whitespace-nowrap text-gray-500"
+										>{formatFileSize(media.fileSize)}</td
+									>
 									<td class="px-3 py-2 text-right">
 										<a
 											href={resolve('/api/challenges/[slug]/media/[mediaId]', {
@@ -89,14 +170,19 @@
 					</table>
 				</div>
 			{/if}
-			<form method="post" class="mt-6 border-t-2 border-dotted border-t-gray-300 pt-6" use:enhance>
+			<form
+				method="post"
+				action="?/submit"
+				class="mt-6 border-t-2 border-dotted border-t-gray-300 pt-6"
+				use:enhance
+			>
 				<div class="flex w-full items-center gap-3">
 					<input
 						type="text"
 						name="flag"
 						id="flag"
 						placeholder={`ctfs${'{'}...${'}'}`}
-						class="font-mono w-full rounded-md border border-gray-300 bg-white px-3 py-2 pr-10 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+						class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 pr-10 font-mono focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
 					/>
 					<Button type="submit" class="flex items-center gap-2">
 						<SendIcon size={16} />
@@ -105,9 +191,7 @@
 				</div>
 				{#if form?.message}
 					<p class="mt-2 text-xs text-gray-600">
-						<span class={cn(
-							form.success ? 'text-green-600' : 'text-red-600'
-						)}>{form.message}</span>
+						<span class={cn(form.success ? 'text-green-600' : 'text-red-600')}>{form.message}</span>
 					</p>
 				{/if}
 			</form>

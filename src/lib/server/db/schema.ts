@@ -1,8 +1,7 @@
-import { pgTable, serial, integer, text, pgEnum, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, serial, integer, text, pgEnum, varchar, date } from 'drizzle-orm/pg-core';
 import { user } from './auth.schema';
 
 export const difficultyEnum = pgEnum("difficulty", ["easy", "medium", "hard"]);
-export const mediaTypeEnum = pgEnum("media_type", ["image", "source", "docker"]);
 export const challenges = pgTable("challenges", {
 	challenge_id: serial("challenge_id").primaryKey(),
 	challenge_title: varchar("title").notNull(),
@@ -25,7 +24,6 @@ export const challengeHints = pgTable("challenge_hints", {
 export const challengeMedia = pgTable("challenge_media", {
 	challenge_media_id: serial("challenge_media_id").primaryKey(),
 	challenge_id: integer("challenge_id").notNull().references(() => challenges.challenge_id, { onDelete: "cascade", onUpdate: "cascade" }),
-	media_type: mediaTypeEnum("media_type").notNull(),
 	file_name: varchar("file_name").notNull(),
 	object_key: text("object_key").notNull().unique(),
 	mime_type: varchar("mime_type"),
@@ -35,6 +33,13 @@ export const challengeMedia = pgTable("challenge_media", {
 export const categories = pgTable("categories", {
 	category_id: serial("category_id").primaryKey(),
 	category_name: varchar("category_name").notNull(),
+})
+
+export const challengeSolves = pgTable("challenge_solves", {
+	challenge_solve_id: serial("challenge_solve_id").primaryKey(),
+	challenge_id: integer("challenge_id").notNull().references(() => challenges.challenge_id, { onDelete: "cascade", onUpdate: "cascade" }),
+	user_id: varchar("user_id").notNull().references(() => user.id, { onDelete: "cascade", onUpdate: "cascade" }),
+	solved_at: date("solved_at").defaultNow().notNull(),
 })
 
 export * from './auth.schema';
