@@ -22,5 +22,8 @@ COPY --from=builder /app/build ./build
 COPY --from=builder /app/node_modules ./node_modules
 COPY package.json .
 
+COPY drizzle.config.* ./
+COPY src/lib/server/db ./src/lib/server/db
+
 EXPOSE 3000
 CMD ["bun", "./build/index.js"]
