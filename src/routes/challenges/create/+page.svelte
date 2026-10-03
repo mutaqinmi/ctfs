@@ -37,7 +37,7 @@
 <Navbar user={data.user} />
 
 <main class="min-h-screen w-full bg-gray-50 pt-28">
-	<div class="mx-auto w-4/5">
+	<div class="mx-4 md:mx-auto md:w-4/5">
 		<section>
 			<Button
 				onclick={() => window.history.back()}
@@ -52,7 +52,7 @@
 			<header class="mb-6">
 				<h2 class="text-2xl font-semibold">Buat Tantangan Baru</h2>
 			</header>
-			<div class="flex flex-col gap-4 mb-12">
+			<div class="flex flex-col-reverse md:flex-col gap-4 mb-12">
 				<Button
 					disabled={$submitting}
 					type="submit"
@@ -66,10 +66,10 @@
 					id="challenge-form"
 					action="/challenges/create"
 					method="POST"
-					class="grid grid-cols-5 gap-6"
+					class="grid md:grid-cols-5 gap-6"
 					use:enhance
 				>
-					<div class="col-span-3 space-y-4 rounded-lg border border-gray-200 bg-white p-4 h-fit">
+					<div class="md:col-span-3 space-y-4 rounded-lg border border-gray-200 bg-white p-4 h-fit">
 						<div class="space-y-1">
 							<label for="challenge_title" class="block">Nama Tantangan</label>
 							<input
@@ -181,7 +181,7 @@
 							{/if}
 						</div>
 					</div>
-					<div class="col-span-2 space-y-4">
+					<div class="md:col-span-2 space-y-4">
                         <div class="flex h-fit flex-col space-y-4 rounded-lg border border-gray-200 bg-white p-4">
                             <header>
 								<h2 class="font-medium">Tambahkan Media</h2>
